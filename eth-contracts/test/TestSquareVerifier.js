@@ -5,3 +5,54 @@
 
     
 // Test verification with incorrect proof
+var SquareVerifier = artifacts.require('SquareVerifier');
+ 
+// const BigNumber = web3.BigNumber;
+   require('chai')
+     .should();
+contract('SquareVerifier', accounts => {
+  let validproof= {
+        "a": ["0x1ba0df5159c4c75da8a30d34e28b0a2242b9634aed77c9b41b979e6081ed5033", "0x04a81e18c8c57362b000213bce6d533055ba4f830dc76abf9c5bf37907ffbdd0"],
+        "b": [["0x272c1132c59a11b904df2e3921eaf7b40ce948a1a24e9b36dd6e2e04cc3e9560", "0x1535e1e6c5cb4d685ef68595487910d68d8813765f422b977b53e32f8c53fc94"], ["0x26e8a26d9bd754c038c42bb9b5b32b91a0c1463aba53b03eb8e224f1230f853a", "0x2c080f65faca972f26229da56b338fc12d62261f8626ec42659bc1090e7a983d"]],
+        "c": ["0x08c833d09a989255fa84bd16e9b4374fbf2c59f92f8b67298771b72c03e56f7f", "0x2f85944aef8c9f217463077e0d8f85fdf5546b3b570820ade0cf9c95a3feb440"]
+    }
+    let inputs= ["0x0000000000000000000000000000000000000000000000000000000000000009", "0x0000000000000000000000000000000000000000000000000000000000000001"]
+ 
+  let invalidproof=  {
+    "a": ["0x26a7f8463ca4f3877e692e1d242d08964950d04733d26455249459098b440ecc", "0x1beb6c4bbc8619e27c4619c739b15d25b6b5cabe45f7f6b9fc6b68a0ddbb5a8f"],
+    "b": [["0x229b7b98e44caf891e77edd8e56911fda0e943040985e58e16263ac4c7a4d359", "0x231e37aca3bf1215417f45690ae93757c7cba74c816170383f245b088944bbc6"], ["0x17ebf0be34c5890e6ed64c4836dba811d117cbd77bfd3e7d30d03fccf6955ce5", "0x287b472b4b95d087fd81bcb70b0a87bd8ac5fa0f8cdce0eed72b1cfa699e9f14"]],
+    "c": ["0x210a8a00ebc3ae34e3ef4aadd32724e2d384a8acb23d37d0fe0926dbfe3a1746", "0x05c5bc387378ad0e15c72d6e094e574cf62867a2f6465c250cfa284fa06cc9fa"]
+}
+    const creator = accounts[0];
+ 
+    describe('Test verification with correct proof', function () {
+        beforeEach(async function () { 
+            this.token = await SquareVerifier.new({from: creator});
+
+        })
+
+        it('should return true with correct proof', async function () { 
+            const result = await this.token.verifyTx.call(
+                validproof.a,
+                validproof.b,
+                validproof. c,
+                inputs
+            ) 
+            result.should.be.equal(true);
+
+        })
+ 
+        it('should return false with incorrect proof', async function () { 
+            const result = await this.token.verifyTx.call(
+                invalidproof.a,
+                invalidproof.b,
+                invalidproof. c,
+                inputs
+            ) 
+            result.should.be.equal(false);
+
+        })
+
+
+    });
+})
